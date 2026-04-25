@@ -19,7 +19,7 @@ export default function Login() {
       } else {
         const { error } = await supabase.auth.signUp({ email, password });
         if (error) throw error;
-        alert('Verifique seu email para confirmar o cadastro!');
+        // Com a confirmação desativada, o Supabase já fará o login automático na mesma hora!
       }
     } catch (err) {
       setError(err.message);
