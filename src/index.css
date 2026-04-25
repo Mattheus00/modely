@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-black: #000000;
+  --color-brand-white: #ffffff;
+  --color-brand-gray: #f5f5f5;
+  --color-brand-border: #e5e5e5;
+  --color-brand-muted: #737373;
+  --font-sans: "Inter", system-ui, sans-serif;
+  --tracking-widest: .15em;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-brand-white);
+    color: var(--color-brand-black);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-brand-black text-brand-white uppercase tracking-widest text-xs font-medium py-4 px-6 w-full flex justify-center items-center active:bg-neutral-800 transition-colors;
+  }
+  .btn-secondary {
+    @apply bg-brand-white text-brand-black border border-brand-border uppercase tracking-widest text-xs font-medium py-4 px-6 w-full flex justify-center items-center active:bg-brand-gray transition-colors;
+  }
+  .input-field {
+    @apply w-full border border-brand-border bg-brand-white px-4 py-3 text-sm focus:outline-none focus:border-brand-black transition-colors;
+  }
+  .label-text {
+    @apply block text-[10px] uppercase tracking-widest text-brand-muted mb-2 font-semibold;
+  }
+  .card {
+    @apply bg-brand-white border border-brand-border p-4;
+  }
+  .bottom-sheet {
+    @apply fixed inset-x-0 bottom-0 bg-brand-white border-t border-brand-border rounded-t-2xl z-50 transform transition-transform duration-300 shadow-[0_-4px_20px_rgba(0,0,0,0.05)];
+  }
+}
