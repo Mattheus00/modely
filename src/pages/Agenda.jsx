@@ -10,6 +10,24 @@ import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import BottomSheet from '../components/BottomSheet';
 
+const JOB_TYPES_COLORS = {
+  'Editorial': 'bg-blue-400',
+  'Campanha': 'bg-purple-400',
+  'Runway': 'bg-pink-400',
+  'Digital': 'bg-cyan-400',
+  'Evento': 'bg-orange-400',
+  'Catálogo': 'bg-emerald-400',
+  'Publicidade': 'bg-indigo-400',
+  'Teste': 'bg-gray-400',
+  'Showroom': 'bg-rose-400',
+  'Fit Model': 'bg-amber-400',
+  'E-commerce': 'bg-teal-400',
+  'Agenda Fechada': 'bg-red-600',
+  'Outro': 'bg-neutral-400'
+};
+
+const JOB_TYPES = Object.keys(JOB_TYPES_COLORS);
+
 export default function Agenda() {
   const { user } = useAuth();
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -84,7 +102,7 @@ export default function Agenda() {
       for (let j = 0; j < 7; j++) {
         const cloneDay = daysInterval[i];
         formattedDate = format(cloneDay, dateFormat);
-        const hasJob = jobs.some(job => isSameDay(parseISO(job.date), cloneDay));
+        const dayJobs = jobs.filter(job => isSameDay(parseISO(job.date), cloneDay));
         const isSelected = isSameDay(cloneDay, selectedDate);
         const inMonth = isSameMonth(cloneDay, monthStart);
 
@@ -98,9 +116,17 @@ export default function Agenda() {
             }`}
           >
             <span className="text-sm">{formattedDate}</span>
-            {hasJob && (
-              <div className={`w-1 h-1 rounded-full mt-1 ${isSelected ? 'bg-brand-white' : 'bg-brand-black'}`} />
-            )}
+            <div className="flex gap-0.5 mt-1 h-1">
+              {dayJobs.slice(0, 3).map((job, idx) => (
+                <div 
+                  key={job.id || idx} 
+                  className={`w-1 h-1 rounded-full ${isSelected ? 'bg-brand-white' : (JOB_TYPES_COLORS[job.job_type] || 'bg-brand-black')}`} 
+                />
+              ))}
+              {dayJobs.length > 3 && (
+                <div className={`w-1 h-1 rounded-full ${isSelected ? 'bg-brand-white' : 'bg-brand-black'}`} />
+              )}
+            </div>
           </div>
         );
         i++;
@@ -189,18 +215,21 @@ export default function Agenda() {
               ) : (
                 <div className="space-y-4">
                   {selectedJobs.map(job => (
-                    <div key={job.id} className="card flex flex-col gap-2">
-                      <div className="flex justify-between items-start">
+                    <div key={job.id} className="card flex flex-col gap-2 relative overflow-hidden">
+                      <div className={`absolute left-0 top-0 bottom-0 w-1 ${JOB_TYPES_COLORS[job.job_type] || 'bg-brand-black'}`} />
+                      <div className="flex justify-between items-start pl-2">
                         <h4 className="font-bold uppercase tracking-widest text-sm">{job.title}</h4>
                         <span className="text-[10px] uppercase tracking-widest bg-brand-gray px-2 py-1 font-semibold border border-brand-border">{job.status}</span>
                       </div>
-                      <p className="text-sm text-brand-muted">{job.client} • {job.job_type}</p>
-                      {(job.call_time || job.location) && (
-                        <p className="text-xs font-medium mt-2">
-                          {job.call_time && `Call: ${job.call_time} `}
-                          {job.location && `| Local: ${job.location}`}
-                        </p>
-                      )}
+                      <div className="pl-2">
+                        <p className="text-sm text-brand-muted">{job.client} • {job.job_type}</p>
+                        {(job.call_time || job.location) && (
+                          <p className="text-xs font-medium mt-2">
+                            {job.call_time && `Call: ${job.call_time} `}
+                            {job.location && `| Local: ${job.location}`}
+                          </p>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -213,13 +242,16 @@ export default function Agenda() {
                 <p className="text-sm text-center text-brand-muted py-8">Nenhum trabalho agendado.</p>
              ) : (
                 jobs.map(job => (
-                  <div key={job.id} className="card flex flex-col gap-2">
-                    <div className="flex justify-between items-start">
+                  <div key={job.id} className="card flex flex-col gap-2 relative overflow-hidden">
+                    <div className={`absolute left-0 top-0 bottom-0 w-1 ${JOB_TYPES_COLORS[job.job_type] || 'bg-brand-black'}`} />
+                    <div className="flex justify-between items-start pl-2">
                       <h4 className="font-bold uppercase tracking-widest text-sm">{job.title}</h4>
                       <span className="text-xs font-semibold">{format(parseISO(job.date), 'dd/MM/yyyy')}</span>
                     </div>
-                    <p className="text-sm text-brand-muted">{job.client} • {job.job_type}</p>
-                    <span className="text-[10px] self-start uppercase tracking-widest border border-brand-border px-2 py-1 font-semibold mt-2">{job.status}</span>
+                    <div className="pl-2">
+                       <p className="text-sm text-brand-muted">{job.client} • {job.job_type}</p>
+                       <span className="text-[10px] self-start uppercase tracking-widest border border-brand-border px-2 py-1 font-semibold mt-2">{job.status}</span>
+                    </div>
                   </div>
                 ))
              )}
@@ -247,7 +279,7 @@ export default function Agenda() {
           <div>
             <label className="label-text">Tipo de Trabalho</label>
             <select name="job_type" value={formData.job_type} onChange={handleFormChange} className="input-field bg-brand-white">
-              {['Editorial', 'Campanha', 'Runway', 'Digital', 'Evento', 'Catálogo', 'Publicidade', 'Teste', 'Showroom', 'Fit Model', 'E-commerce', 'Outro'].map(t => (
+              {JOB_TYPES.map(t => (
                 <option key={t} value={t}>{t}</option>
               ))}
             </select>
