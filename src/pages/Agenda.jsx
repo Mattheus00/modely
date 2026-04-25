@@ -288,7 +288,7 @@ export default function Agenda() {
             <label className="label-text">Data *</label>
             <input type="date" name="date" required value={formData.date} onChange={handleFormChange} className="input-field" />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="label-text">Horário de Call</label>
               <input type="time" name="call_time" value={formData.call_time} onChange={handleFormChange} className="input-field" />
@@ -302,7 +302,7 @@ export default function Agenda() {
             <label className="label-text">Local / Endereço</label>
             <input type="text" name="location" value={formData.location} onChange={handleFormChange} className="input-field" />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="label-text">Valor (R$)</label>
               <input type="number" step="0.01" name="value" value={formData.value} onChange={handleFormChange} className="input-field" placeholder="0.00" />

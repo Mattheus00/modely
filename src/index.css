@@ -27,7 +27,7 @@
     @apply bg-brand-white text-brand-black border border-brand-border uppercase tracking-widest text-xs font-medium py-4 px-6 w-full flex justify-center items-center active:bg-brand-gray transition-colors;
   }
   .input-field {
-    @apply w-full border border-brand-border bg-brand-white px-4 py-3 text-sm focus:outline-none focus:border-brand-black transition-colors;
+    @apply w-full border border-brand-border bg-brand-white px-4 py-3 text-sm focus:outline-none focus:border-brand-black transition-colors appearance-none box-border;
   }
   .label-text {
     @apply block text-[10px] uppercase tracking-widest text-brand-muted mb-2 font-semibold;
