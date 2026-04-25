@@ -18,7 +18,7 @@ const JOB_TYPES_COLORS = {
   'Evento': 'bg-orange-400',
   'Catálogo': 'bg-emerald-400',
   'Publicidade': 'bg-indigo-400',
-  'Teste': 'bg-gray-400',
+  'Casting': 'bg-gray-400',
   'Showroom': 'bg-rose-400',
   'Fit Model': 'bg-amber-400',
   'E-commerce': 'bg-teal-400',
