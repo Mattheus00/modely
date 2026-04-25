@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   format, addMonths, subMonths, startOfMonth, endOfMonth, 
   startOfWeek, endOfWeek, eachDayOfInterval, isSameMonth, 
-  isSameDay, parseISO, addDays 
+  isSameDay, parseISO, addDays, isWithinInterval, startOfDay 
 } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight, Plus, Calendar as CalendarIcon, List as ListIcon } from 'lucide-react';
@@ -43,6 +43,7 @@ export default function Agenda() {
     client: '',
     job_type: 'Editorial',
     date: format(new Date(), 'yyyy-MM-dd'),
+    end_date: '',
     call_time: '',
     end_time: '',
     location: '',
@@ -102,7 +103,11 @@ export default function Agenda() {
       for (let j = 0; j < 7; j++) {
         const cloneDay = daysInterval[i];
         formattedDate = format(cloneDay, dateFormat);
-        const dayJobs = jobs.filter(job => isSameDay(parseISO(job.date), cloneDay));
+        const dayJobs = jobs.filter(job => {
+          const start = startOfDay(parseISO(job.date));
+          const end = job.end_date ? startOfDay(parseISO(job.end_date)) : start;
+          return isSameDay(cloneDay, start) || isSameDay(cloneDay, end) || (cloneDay >= start && cloneDay <= end);
+        });
         const isSelected = isSameDay(cloneDay, selectedDate);
         const inMonth = isSameMonth(cloneDay, monthStart);
 
@@ -184,13 +189,17 @@ export default function Agenda() {
       setIsAddModalOpen(false);
       fetchJobs();
       setFormData({
-        title: '', client: '', job_type: 'Editorial', date: format(new Date(), 'yyyy-MM-dd'),
+        title: '', client: '', job_type: 'Editorial', date: format(new Date(), 'yyyy-MM-dd'), end_date: '',
         call_time: '', end_time: '', location: '', value: '', payment_delay_days: 90, status: 'agendado', notes: ''
       });
     }
   };
 
-  const selectedJobs = jobs.filter(job => isSameDay(parseISO(job.date), selectedDate));
+  const selectedJobs = jobs.filter(job => {
+    const start = startOfDay(parseISO(job.date));
+    const end = job.end_date ? startOfDay(parseISO(job.end_date)) : start;
+    return isSameDay(selectedDate, start) || isSameDay(selectedDate, end) || (selectedDate >= start && selectedDate <= end);
+  });
 
   return (
     <div className="min-h-full pb-20">
@@ -284,9 +293,15 @@ export default function Agenda() {
               ))}
             </select>
           </div>
-          <div>
-            <label className="label-text">Data *</label>
-            <input type="date" name="date" required value={formData.date} onChange={handleFormChange} className="input-field" />
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="label-text">Data Início *</label>
+              <input type="date" name="date" required value={formData.date} onChange={handleFormChange} className="input-field" />
+            </div>
+            <div>
+              <label className="label-text">Data Término (Opcional)</label>
+              <input type="date" name="end_date" value={formData.end_date} onChange={handleFormChange} className="input-field" />
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
