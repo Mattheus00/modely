@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -7,6 +9,14 @@ export default function Login() {
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (user) {
+      navigate('/');
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,7 +29,6 @@ export default function Login() {
       } else {
         const { error } = await supabase.auth.signUp({ email, password });
         if (error) throw error;
-        // Com a confirmação desativada, o Supabase já fará o login automático na mesma hora!
       }
     } catch (err) {
       setError(err.message);
@@ -41,9 +50,9 @@ export default function Login() {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="label-text">Email</label>
-            <input 
-              type="email" 
-              className="input-field" 
+            <input
+              type="email"
+              className="input-field"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -51,9 +60,9 @@ export default function Login() {
           </div>
           <div>
             <label className="label-text">Senha</label>
-            <input 
-              type="password" 
-              className="input-field" 
+            <input
+              type="password"
+              className="input-field"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -63,8 +72,8 @@ export default function Login() {
             {loading ? 'Carregando...' : (isLogin ? 'Entrar' : 'Criar Conta')}
           </button>
         </form>
-        <button 
-          onClick={() => setIsLogin(!isLogin)} 
+        <button
+          onClick={() => setIsLogin(!isLogin)}
           className="w-full mt-6 text-xs uppercase tracking-widest text-brand-muted hover:text-brand-black transition-colors"
         >
           {isLogin ? 'Não tem uma conta? Cadastre-se' : 'Já tem uma conta? Entre'}
