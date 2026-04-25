@@ -83,9 +83,6 @@ export default function Agenda() {
     const rows = [];
     let days = [];
     let day = startDate;
-    let formattedDate = "";
-
-    const daysInterval = eachDayOfInterval({ start: startDate, end: endDate });
 
     const weekDays = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
     const weekDaysHeader = (
@@ -98,11 +95,10 @@ export default function Agenda() {
       </div>
     );
 
-    let i = 0;
-    while (i < daysInterval.length) {
-      for (let j = 0; j < 7; j++) {
-        const cloneDay = daysInterval[i];
-        formattedDate = format(cloneDay, dateFormat);
+    while (day <= endDate) {
+      for (let i = 0; i < 7; i++) {
+        const cloneDay = day;
+        const formattedDate = format(cloneDay, dateFormat);
         const dayJobs = jobs.filter(job => {
           const start = startOfDay(parseISO(job.date));
           const end = job.end_date ? startOfDay(parseISO(job.end_date)) : start;
@@ -113,7 +109,7 @@ export default function Agenda() {
 
         days.push(
           <div 
-            key={cloneDay.toISOString()} 
+            key={cloneDay.toString()} 
             onClick={() => setSelectedDate(cloneDay)}
             className={`p-2 flex flex-col items-center justify-center cursor-pointer h-12 w-12 mx-auto rounded-full transition-colors ${
               !inMonth ? 'text-brand-border' : 
@@ -134,10 +130,10 @@ export default function Agenda() {
             </div>
           </div>
         );
-        i++;
+        day = addDays(day, 1);
       }
       rows.push(
-        <div className="grid grid-cols-7 gap-1 mb-1" key={day.toISOString()}>
+        <div className="grid grid-cols-7 gap-1 mb-1" key={day.toString()}>
           {days}
         </div>
       );
