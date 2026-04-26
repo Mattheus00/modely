@@ -101,7 +101,14 @@ export default function Profile() {
       <div className="p-4 space-y-8">
         {/* Cartão de Apresentação (Compartilhável) */}
         <div className="bg-brand-black text-brand-white p-6 relative overflow-hidden flex flex-col items-center text-center space-y-4">
-          <div className="pt-2">
+          <div className="w-24 h-24 rounded-full border-2 border-brand-white/20 overflow-hidden bg-neutral-900 flex-shrink-0">
+            {profile.avatar_url ? (
+              <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
+            ) : (
+              <User size={48} className="text-brand-gray/50 m-auto mt-6" />
+            )}
+          </div>
+          <div>
             <h2 className="text-xl font-bold uppercase tracking-widest">{profile.name || 'Seu Nome'}</h2>
             <p className="text-sm tracking-widest text-brand-gray/70 mt-1">{profile.agency || 'Sua Agência'}</p>
           </div>
