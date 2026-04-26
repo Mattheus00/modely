@@ -8,6 +8,7 @@ import { ptBR } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight, Plus, Calendar as CalendarIcon, List as ListIcon, Pencil } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
+import { useNotifications } from '../contexts/NotificationContext';
 import BottomSheet from '../components/BottomSheet';
 
 const JOB_TYPES_COLORS = {
@@ -35,6 +36,7 @@ const JOB_TYPES = Object.keys(JOB_TYPES_COLORS);
 
 export default function Agenda() {
   const { user } = useAuth();
+  const { refreshNotifications } = useNotifications();
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [view, setView] = useState('calendar'); // 'calendar' | 'list'
@@ -216,6 +218,7 @@ export default function Agenda() {
       setIsAddModalOpen(false);
       setEditingJobId(null);
       fetchJobs();
+      refreshNotifications();
       setFormData({
         title: '', client: '', job_type: 'Editorial', date: format(new Date(), 'yyyy-MM-dd'), end_date: '',
         call_time: '', end_time: '', location: '', value: '', payment_delay_days: 90, status: 'agendado', notes: ''

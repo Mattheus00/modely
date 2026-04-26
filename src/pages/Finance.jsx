@@ -4,9 +4,11 @@ import { ptBR } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight, CheckCircle2, Clock, AlertCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
+import { useNotifications } from '../contexts/NotificationContext';
 
 export default function Finance() {
   const { user } = useAuth();
+  const { notifications, refreshNotifications } = useNotifications();
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [jobs, setJobs] = useState([]);
   const [filter, setFilter] = useState('todos'); // todos, pendente, recebido, atrasado
@@ -20,10 +22,11 @@ export default function Finance() {
       .eq('user_id', user.id)
       .not('value', 'is', null)
       .order('date', { ascending: true });
-    
+
     if (error) console.error(error);
     else setJobs(data || []);
     setLoading(false);
+    refreshNotifications();
   };
 
   useEffect(() => {
@@ -47,7 +50,7 @@ export default function Finance() {
   };
 
   const monthJobs = jobs.filter(job => isSameMonth(parseISO(job.date), currentMonth));
-  
+
   const stats = monthJobs.reduce((acc, job) => {
     const status = getJobPaymentStatus(job);
     const val = parseFloat(job.value) || 0;
@@ -57,8 +60,6 @@ export default function Finance() {
     if (status === 'atrasado') acc.overdue += val;
     return acc;
   }, { total: 0, received: 0, pending: 0, overdue: 0 });
-
-  const progressPercent = stats.total > 0 ? (stats.received / stats.total) * 100 : 0;
 
   const filteredJobs = monthJobs.filter(job => {
     if (filter === 'todos') return true;
@@ -86,32 +87,22 @@ export default function Finance() {
           <div className="card bg-brand-black text-brand-white col-span-2">
             <h3 className="text-[10px] uppercase tracking-widest text-brand-gray mb-1">Total do Mês</h3>
             <p className="text-2xl font-bold">{formatCurrency(stats.total)}</p>
-            
-            <div className="mt-4">
-              <div className="flex justify-between text-[10px] uppercase tracking-widest mb-1">
-                <span>Progresso</span>
-                <span>{progressPercent.toFixed(0)}%</span>
-              </div>
-              <div className="w-full bg-neutral-800 h-1.5 rounded-full overflow-hidden">
-                <div className="bg-brand-white h-full" style={{ width: `${progressPercent}%` }}></div>
-              </div>
-            </div>
           </div>
-          
+
           <div className="card">
             <h3 className="text-[10px] uppercase tracking-widest text-brand-muted mb-1 flex items-center gap-1">
               <CheckCircle2 size={12} /> Recebido
             </h3>
             <p className="text-lg font-bold">{formatCurrency(stats.received)}</p>
           </div>
-          
+
           <div className="card">
             <h3 className="text-[10px] uppercase tracking-widest text-brand-muted mb-1 flex items-center gap-1">
               <Clock size={12} /> A Receber
             </h3>
             <p className="text-lg font-bold">{formatCurrency(stats.pending)}</p>
           </div>
-          
+
           <div className="card border-red-200 col-span-2">
             <h3 className="text-[10px] uppercase tracking-widest text-red-500 mb-1 flex items-center gap-1">
               <AlertCircle size={12} /> Atrasado
@@ -126,11 +117,10 @@ export default function Finance() {
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`px-4 py-2 text-[10px] uppercase tracking-widest whitespace-nowrap transition-colors border ${
-                filter === f 
-                  ? 'bg-brand-black text-brand-white border-brand-black' 
+              className={`px-4 py-2 text-[10px] uppercase tracking-widest whitespace-nowrap transition-colors border ${filter === f
+                  ? 'bg-brand-black text-brand-white border-brand-black'
                   : 'bg-brand-white text-brand-black border-brand-border'
-              }`}
+                }`}
             >
               {f}
             </button>
@@ -144,31 +134,38 @@ export default function Finance() {
           ) : (
             filteredJobs.map(job => {
               const status = getJobPaymentStatus(job);
+              const isNotified = notifications.some(n => n.id === job.id);
+              
               return (
-                <div key={job.id} className="card flex flex-col gap-3">
+                <div key={job.id} className={`card flex flex-col gap-3 transition-colors ${isNotified && status !== 'recebido' ? 'border-amber-400 bg-amber-50/30' : ''}`}>
                   <div className="flex justify-between items-start">
                     <div>
-                      <h4 className="font-bold uppercase tracking-widest text-sm">{job.title}</h4>
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-bold uppercase tracking-widest text-sm">{job.title}</h4>
+                        {isNotified && status !== 'recebido' && (
+                          <span className="flex h-2 w-2 rounded-full bg-amber-500 animate-pulse"></span>
+                        )}
+                      </div>
                       <p className="text-xs text-brand-muted">{format(parseISO(job.date), 'dd/MM/yyyy')}</p>
                     </div>
                     <p className="font-bold">{formatCurrency(job.value)}</p>
                   </div>
-                  
+
                   <div className="flex justify-between items-end">
                     <div className="flex flex-col gap-1">
-                      <span className="text-[10px] uppercase tracking-widest text-brand-muted">
+                      <span className={`text-[10px] uppercase tracking-widest ${isNotified && status !== 'recebido' ? 'text-amber-700 font-bold' : 'text-brand-muted'}`}>
                         Pgto: {job.payment_date ? format(parseISO(job.payment_date), 'dd/MM/yyyy') : 'Não definido'}
+                        {isNotified && status !== 'recebido' && ' (Vence em breve!)'}
                       </span>
-                      <span className={`text-[10px] uppercase tracking-widest px-2 py-1 font-semibold inline-block self-start ${
-                        status === 'recebido' ? 'bg-green-100 text-green-800' :
-                        status === 'atrasado' ? 'bg-red-100 text-red-800' :
-                        'bg-brand-gray text-brand-black'
-                      }`}>
+                      <span className={`text-[10px] uppercase tracking-widest px-2 py-1 font-semibold inline-block self-start ${status === 'recebido' ? 'bg-green-100 text-green-800' :
+                          status === 'atrasado' ? 'bg-red-100 text-red-800' :
+                            'bg-brand-gray text-brand-black'
+                        }`}>
                         {status}
                       </span>
                     </div>
                     {status !== 'recebido' && (
-                      <button 
+                      <button
                         onClick={() => markAsReceived(job.id)}
                         className="text-[10px] uppercase tracking-widest border border-brand-black px-3 py-2 active:bg-brand-gray"
                       >
