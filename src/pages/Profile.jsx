@@ -100,8 +100,8 @@ export default function Profile() {
 
       <div className="p-4 space-y-8">
         {/* Cartão de Apresentação (Compartilhável) */}
-        <div className="bg-brand-black text-brand-white p-6 relative overflow-hidden flex flex-col items-center text-center space-y-4">
-          <div className="w-24 h-24 rounded-full border-2 border-brand-white/20 overflow-hidden bg-neutral-900 flex-shrink-0">
+        <div className="bg-brand-white text-brand-black p-6 relative overflow-hidden flex flex-col items-center text-center space-y-4 border border-brand-border">
+          <div className="w-24 h-24 rounded-full border-2 border-brand-border overflow-hidden bg-brand-gray flex-shrink-0">
             {profile.avatar_url ? (
               <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
             ) : (
@@ -112,7 +112,7 @@ export default function Profile() {
             <h2 className="text-xl font-bold uppercase tracking-widest">{profile.name || 'Seu Nome'}</h2>
             <p className="text-sm tracking-widest text-brand-gray/70 mt-1">{profile.agency || 'Sua Agência'}</p>
           </div>
-          <div className="pt-4 border-t border-brand-white/20 w-full flex justify-center gap-4 text-xs font-medium tracking-widest">
+          <div className="pt-4 border-t border-brand-border w-full flex justify-center gap-4 text-xs font-medium tracking-widest">
             {profile.phone && <span className="flex items-center gap-1"><Phone size={14} /> {profile.phone}</span>}
           </div>
         </div>
