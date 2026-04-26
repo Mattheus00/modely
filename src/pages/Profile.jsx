@@ -110,7 +110,7 @@ export default function Profile() {
           </div>
           <div>
             <h2 className="text-xl font-bold uppercase tracking-widest">{profile.name || 'Seu Nome'}</h2>
-            <p className="text-sm tracking-widest text-brand-gray/70 mt-1">{profile.agency || 'Sua Agência'}</p>
+            <p className="text-sm tracking-widest text-brand-muted mt-1">{profile.agency || 'Sua Agência'}</p>
           </div>
           <div className="pt-4 border-t border-brand-border w-full flex justify-center gap-4 text-xs font-medium tracking-widest">
             {profile.phone && <span className="flex items-center gap-1"><Phone size={14} /> {profile.phone}</span>}
