@@ -111,8 +111,8 @@ export default function Measurements() {
               </div>
               <div className="grid grid-cols-4 gap-4 text-center">
                 <div>
-                  <div className="text-[10px] uppercase tracking-widest text-brand-gray mb-1">Altura</div>
-                  <div className="font-bold">{latest.height || '-'}</div>
+                  <div className="text-[10px] uppercase tracking-widest text-brand-gray mb-1">Peso</div>
+                  <div className="font-bold">{latest.weight || '-'}</div>
                 </div>
                 <div>
                   <div className="text-[10px] uppercase tracking-widest text-brand-gray mb-1">Busto</div>
@@ -125,20 +125,6 @@ export default function Measurements() {
                 <div>
                   <div className="text-[10px] uppercase tracking-widest text-brand-gray mb-1">Quadril</div>
                   <div className="font-bold">{latest.hips || '-'}</div>
-                </div>
-              </div>
-              <div className="grid grid-cols-3 gap-4 text-center mt-4 pt-4 border-t border-neutral-800">
-                <div>
-                  <div className="text-[10px] uppercase tracking-widest text-brand-gray mb-1">Peso</div>
-                  <div className="font-bold">{latest.weight || '-'}</div>
-                </div>
-                <div>
-                  <div className="text-[10px] uppercase tracking-widest text-brand-gray mb-1">Sapato</div>
-                  <div className="font-bold">{latest.shoe_size || '-'}</div>
-                </div>
-                <div>
-                  <div className="text-[10px] uppercase tracking-widest text-brand-gray mb-1">Manequim</div>
-                  <div className="font-bold">{latest.dress_size || '-'}</div>
                 </div>
               </div>
             </div>
