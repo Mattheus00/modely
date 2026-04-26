@@ -41,7 +41,7 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center p-6">
       <div className="w-full max-w-sm">
         <div className="flex justify-center mb-8">
-          <img src="/logo.png" alt="Manager Modeling Logo" className="h-40 w-auto object-contain" />
+          <img src="/logo.png" alt="Manager Modeling Logo" className="h-52 w-auto object-contain" />
         </div>
         <h1 className="text-xl font-bold uppercase tracking-widest text-center mb-8">
           {isLogin ? 'Entrar' : 'Cadastrar'}
