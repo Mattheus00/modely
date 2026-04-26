@@ -22,7 +22,6 @@ const JOB_TYPES_COLORS = {
   'Fitting': 'bg-orange-400',
   'Call': 'bg-sky-400',
   'Showroom': 'bg-rose-400',
-  'Fit Model': 'bg-amber-400',
   'E-commerce': 'bg-teal-400',
   'Publicidade': 'bg-indigo-400',
   'Evento': 'bg-orange-500',
