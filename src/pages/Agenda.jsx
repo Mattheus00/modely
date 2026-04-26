@@ -13,16 +13,22 @@ import BottomSheet from '../components/BottomSheet';
 const JOB_TYPES_COLORS = {
   'Editorial': 'bg-blue-400',
   'Campanha': 'bg-purple-400',
-  'Runway': 'bg-pink-400',
-  'Digital': 'bg-cyan-400',
-  'Evento': 'bg-orange-400',
-  'Catálogo': 'bg-emerald-400',
-  'Publicidade': 'bg-indigo-400',
+  'Desfile': 'bg-pink-400',
+  'Polaroid': 'bg-cyan-400',
+  'Shooting': 'bg-emerald-400',
   'Casting': 'bg-gray-400',
+  'Appointment': 'bg-lime-400',
+  'Callback': 'bg-yellow-400',
+  'Fitting': 'bg-orange-400',
+  'Call': 'bg-sky-400',
   'Showroom': 'bg-rose-400',
   'Fit Model': 'bg-amber-400',
   'E-commerce': 'bg-teal-400',
-  'Agenda Fechada': 'bg-red-600',
+  'Publicidade': 'bg-indigo-400',
+  'Evento': 'bg-orange-500',
+  'Férias': 'bg-green-400',
+  'Out': 'bg-slate-400',
+  'Agenda Fechada w/ Consulta': 'bg-red-600',
   'Outro': 'bg-neutral-400'
 };
 
@@ -174,6 +180,7 @@ export default function Agenda() {
       {
         ...formData,
         user_id: user.id,
+        end_date: formData.end_date || null,
         value: formData.value ? parseFloat(formData.value) : null,
         payment_date: paymentDate
       }

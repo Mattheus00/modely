@@ -101,14 +101,7 @@ export default function Profile() {
       <div className="p-4 space-y-8">
         {/* Cartão de Apresentação (Compartilhável) */}
         <div className="bg-brand-black text-brand-white p-6 relative overflow-hidden flex flex-col items-center text-center space-y-4">
-          <div className="w-24 h-24 rounded-full border-2 border-brand-white/20 overflow-hidden bg-neutral-900 flex-shrink-0">
-            {profile.avatar_url ? (
-              <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
-            ) : (
-              <User size={48} className="text-brand-gray/50 m-auto mt-6" />
-            )}
-          </div>
-          <div>
+          <div className="pt-2">
             <h2 className="text-xl font-bold uppercase tracking-widest">{profile.name || 'Seu Nome'}</h2>
             <p className="text-sm tracking-widest text-brand-gray/70 mt-1">{profile.agency || 'Sua Agência'}</p>
           </div>
@@ -120,16 +113,10 @@ export default function Profile() {
         {/* Formulário */}
         <form onSubmit={handleSaveProfile} className="space-y-6">
           <div className="flex flex-col items-center">
-            <label className="cursor-pointer group relative">
-              <div className="w-20 h-20 rounded-full border border-brand-border bg-brand-gray overflow-hidden flex items-center justify-center mb-2">
-                {profile.avatar_url ? (
-                  <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
-                ) : (
-                  <User className="text-brand-muted" size={32} />
-                )}
-              </div>
-              <div className="absolute inset-0 bg-black/50 rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                <Upload className="text-white" size={20} />
+            <label className="cursor-pointer group flex flex-col items-center">
+              <div className="flex items-center gap-2 text-blue-600 font-bold uppercase tracking-widest text-[10px] hover:text-blue-800 transition-colors">
+                <Upload size={14} />
+                {uploading ? 'Enviando...' : 'Alterar Foto'}
               </div>
               <input 
                 type="file" 
@@ -139,9 +126,6 @@ export default function Profile() {
                 disabled={uploading}
               />
             </label>
-            <span className="text-[10px] uppercase tracking-widest text-brand-muted">
-              {uploading ? 'Enviando...' : 'Alterar Foto'}
-            </span>
           </div>
 
           <div>
