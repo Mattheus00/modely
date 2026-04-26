@@ -1,13 +1,13 @@
-# Modelly | Management Hub for Models 📸✨
+# Manager Modeling | Management Hub for Models 📸✨
 
-**Modelly** é uma plataforma premium e minimalista desenvolvida exclusivamente para modelos profissionais que buscam excelência na organização de sua carreira. Com uma interface *mobile-first* de alto padrão, o Modelly centraliza agenda, finanças e evolução física em um único lugar.
+**Manager Modeling** é uma plataforma premium e minimalista desenvolvida exclusivamente para modelos profissionais que buscam excelência na organização de sua carreira. Com uma interface *mobile-first* de alto padrão, o Manager Modeling centraliza agenda, finanças e evolução física em um único lugar.
 
 ---
 
 ## 💎 Diferenciais Estratégicos
 
 ### 🗓️ Agenda Inteligente & Visual
-Gerencie seus compromissos com clareza. O Modelly oferece suporte a jobs de múltiplos dias (viagens, campanhas) com um sistema de cores intuitivo.
+Gerencie seus compromissos com clareza. O Manager Modeling oferece suporte a jobs de múltiplos dias (viagens, campanhas) com um sistema de cores intuitivo.
 - **Categorização por cores:** Identifique instantaneamente se o dia é de Editorial, Runway, Campanha ou Agenda Fechada.
 - **Visão Híbrida:** Alterne entre calendário mensal e lista detalhada de jobs.
 
