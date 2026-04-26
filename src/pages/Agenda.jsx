@@ -5,7 +5,7 @@ import {
   isSameDay, parseISO, addDays, isWithinInterval, startOfDay 
 } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { ChevronLeft, ChevronRight, Plus, Calendar as CalendarIcon, List as ListIcon } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Calendar as CalendarIcon, List as ListIcon, Pencil } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import BottomSheet from '../components/BottomSheet';
@@ -40,6 +40,7 @@ export default function Agenda() {
   const [view, setView] = useState('calendar'); // 'calendar' | 'list'
   const [jobs, setJobs] = useState([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [editingJobId, setEditingJobId] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // Form state
@@ -171,24 +172,49 @@ export default function Agenda() {
     return format(addDays(d, parseInt(delayDays) || 0), 'yyyy-MM-dd');
   };
 
-  const handleAddJob = async (e) => {
+  const handleEditJob = (job) => {
+    setEditingJobId(job.id);
+    setFormData({
+      title: job.title || '',
+      client: job.client || '',
+      job_type: job.job_type || 'Editorial',
+      date: job.date || format(new Date(), 'yyyy-MM-dd'),
+      end_date: job.end_date || '',
+      call_time: job.call_time || '',
+      end_time: job.end_time || '',
+      location: job.location || '',
+      value: job.value || '',
+      payment_delay_days: job.payment_delay_days || 90,
+      status: job.status || 'agendado',
+      notes: job.notes || ''
+    });
+    setIsAddModalOpen(true);
+  };
+
+  const handleSaveJob = async (e) => {
     e.preventDefault();
     const paymentDate = calculatePaymentDate(formData.date, formData.payment_delay_days);
     
-    const { error } = await supabase.from('jobs').insert([
-      {
-        ...formData,
-        user_id: user.id,
-        end_date: formData.end_date || null,
-        value: formData.value ? parseFloat(formData.value) : null,
-        payment_date: paymentDate
-      }
-    ]);
+    const jobData = {
+      ...formData,
+      user_id: user.id,
+      end_date: formData.end_date || null,
+      value: formData.value ? parseFloat(formData.value) : null,
+      payment_date: paymentDate
+    };
 
-    if (error) {
-      alert('Erro ao adicionar trabalho: ' + error.message);
+    let result;
+    if (editingJobId) {
+      result = await supabase.from('jobs').update(jobData).eq('id', editingJobId);
+    } else {
+      result = await supabase.from('jobs').insert([jobData]);
+    }
+
+    if (result.error) {
+      alert('Erro ao salvar trabalho: ' + result.error.message);
     } else {
       setIsAddModalOpen(false);
+      setEditingJobId(null);
       fetchJobs();
       setFormData({
         title: '', client: '', job_type: 'Editorial', date: format(new Date(), 'yyyy-MM-dd'), end_date: '',
@@ -229,8 +255,15 @@ export default function Agenda() {
                     <div key={job.id} className="card flex flex-col gap-2 relative overflow-hidden">
                       <div className={`absolute left-0 top-0 bottom-0 w-1 ${JOB_TYPES_COLORS[job.job_type] || 'bg-brand-black'}`} />
                       <div className="flex justify-between items-start pl-2">
-                        <h4 className="font-bold uppercase tracking-widest text-sm">{job.title}</h4>
-                        <span className="text-[10px] uppercase tracking-widest bg-brand-gray px-2 py-1 font-semibold border border-brand-border">{job.status}</span>
+                        <div className="flex-1">
+                          <h4 className="font-bold uppercase tracking-widest text-sm">{job.title}</h4>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button onClick={() => handleEditJob(job)} className="p-1 text-brand-muted hover:text-brand-black transition-colors">
+                            <Pencil size={14} />
+                          </button>
+                          <span className="text-[10px] uppercase tracking-widest bg-brand-gray px-2 py-1 font-semibold border border-brand-border">{job.status}</span>
+                        </div>
                       </div>
                       <div className="pl-2">
                         <p className="text-sm text-brand-muted">{job.client} • {job.job_type}</p>
@@ -256,8 +289,15 @@ export default function Agenda() {
                   <div key={job.id} className="card flex flex-col gap-2 relative overflow-hidden">
                     <div className={`absolute left-0 top-0 bottom-0 w-1 ${JOB_TYPES_COLORS[job.job_type] || 'bg-brand-black'}`} />
                     <div className="flex justify-between items-start pl-2">
-                      <h4 className="font-bold uppercase tracking-widest text-sm">{job.title}</h4>
-                      <span className="text-xs font-semibold">{format(parseISO(job.date), 'dd/MM/yyyy')}</span>
+                      <div className="flex-1">
+                        <h4 className="font-bold uppercase tracking-widest text-sm">{job.title}</h4>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button onClick={() => handleEditJob(job)} className="p-1 text-brand-muted hover:text-brand-black transition-colors">
+                          <Pencil size={14} />
+                        </button>
+                        <span className="text-xs font-semibold">{format(parseISO(job.date), 'dd/MM/yyyy')}</span>
+                      </div>
                     </div>
                     <div className="pl-2">
                        <p className="text-sm text-brand-muted">{job.client} • {job.job_type}</p>
@@ -271,14 +311,24 @@ export default function Agenda() {
       </div>
 
       <button 
-        onClick={() => setIsAddModalOpen(true)}
+        onClick={() => {
+          setEditingJobId(null);
+          setFormData({
+            title: '', client: '', job_type: 'Editorial', date: format(new Date(), 'yyyy-MM-dd'), end_date: '',
+            call_time: '', end_time: '', location: '', value: '', payment_delay_days: 90, status: 'agendado', notes: ''
+          });
+          setIsAddModalOpen(true);
+        }}
         className="fixed bottom-24 right-6 bg-brand-black text-brand-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-transform z-20"
       >
         <Plus size={24} />
       </button>
 
-      <BottomSheet isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} title="Novo Trabalho">
-        <form onSubmit={handleAddJob} className="space-y-4 pb-8">
+      <BottomSheet isOpen={isAddModalOpen} onClose={() => {
+        setIsAddModalOpen(false);
+        setEditingJobId(null);
+      }} title={editingJobId ? "Editar Trabalho" : "Novo Trabalho"}>
+        <form onSubmit={handleSaveJob} className="space-y-4 pb-8">
           <div>
             <label className="label-text">Título *</label>
             <input type="text" name="title" required value={formData.title} onChange={handleFormChange} className="input-field" placeholder="Ex: Shooting Verão" />
